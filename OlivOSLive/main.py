@@ -69,27 +69,31 @@ class MyThread(threading.Thread):
                         except:
                             time.sleep(5)
                             continue
-                        if hugjs['msg'] == 'success' and hugjs['message'] == 'success':
-                            if hugjs['data'][live_index]['live_status'] == 1 and lives[live_index] == 0:
-                                tmp_live_reply1 = text.format(id=hugjs['data'][live_index]['uname'],
-                                                              url=hugjs['data'][live_index]['room_id'])
-                                tmp_live_reply1 += "\n直播名称：" + hugjs['data'][live_index]['title'] + '\n直播封面：\n'
-                                tmp_live_reply1 += '[OP:image,file=' + hugjs['data'][live_index]['cover_from_user'] + ']'
-                                plugin_event = OlivOS.API.Event(
-                                    OlivOS.contentAPI.fake_sdk_event(
-                                        bot_info=self.Proc.Proc_data['bot_info_dict'][botHash],
-                                        fakename='OlivOSLive'
-                                    ),
-                                    self.Proc.log
-                                )
-                                plugin_event.send('group', 765947729, tmp_live_reply1)
-                                plugin_event.send('group', 754041375, tmp_live_reply1)
-                                plugin_event.send('group', 252994683, tmp_live_reply1)
-                                lives[live_index] = 1
-                            elif hugjs['data'][live_index]['live_status'] == 2 or hugjs['data'][live_index]['live_status'] == 0:
-                                lives[live_index] = 0
-                        rad_sleep = random.randint(30, 90)
-                        time.sleep(rad_sleep)
+                        try:
+                            if hugjs['msg'] == 'success' and hugjs['message'] == 'success':
+                                if hugjs['data'][live_index]['live_status'] == 1 and lives[live_index] == 0:
+                                    tmp_live_reply1 = text.format(id=hugjs['data'][live_index]['uname'],
+                                                                  url=hugjs['data'][live_index]['room_id'])
+                                    tmp_live_reply1 += "\n直播名称：" + hugjs['data'][live_index]['title'] + '\n直播封面：\n'
+                                    tmp_live_reply1 += '[OP:image,file=' + hugjs['data'][live_index]['cover_from_user'] + ']'
+                                    plugin_event = OlivOS.API.Event(
+                                        OlivOS.contentAPI.fake_sdk_event(
+                                            bot_info=self.Proc.Proc_data['bot_info_dict'][botHash],
+                                            fakename='OlivOSLive'
+                                        ),
+                                        self.Proc.log
+                                    )
+                                    plugin_event.send('group', 765947729, tmp_live_reply1)
+                                    plugin_event.send('group', 754041375, tmp_live_reply1)
+                                    plugin_event.send('group', 252994683, tmp_live_reply1)
+                                    lives[live_index] = 1
+                                elif hugjs['data'][live_index]['live_status'] == 2 or hugjs['data'][live_index]['live_status'] == 0:
+                                    lives[live_index] = 0
+                            rad_sleep = random.randint(30, 90)
+                            time.sleep(rad_sleep)
+                        except:
+                            time.sleep(0.5)
+                            continue
                     live_text.seek(0)
                     live_text.truncate()
                     live_text.write(str(lives))
