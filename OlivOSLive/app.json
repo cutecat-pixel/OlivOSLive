@@ -1,0 +1,21 @@
+{
+    "name" : "OlivOSLive",
+    "author" : "Cute_CAT",
+    "namespace" : "OlivOSLive",
+    "priority" : 30000,
+    "svn" : 1,
+    "compatible_svn" : 94,
+    "message_mode" : "olivos_string",
+    "support" : [
+        {
+            "sdk" : "onebot",
+            "platform" : "qq",
+            "model" : "all"
+        },
+        {
+            "sdk" : "telegram_poll",
+            "platform" : "telegram",
+            "model" : "all"
+        }
+    ]
+}
