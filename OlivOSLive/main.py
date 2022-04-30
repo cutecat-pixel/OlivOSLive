@@ -21,11 +21,26 @@ import os
 import time
 import errno
 import multiprocessing
+import pymysql
+
+DBHOST = 'localhost'
+DBUSER = 'root'
+DBPASS = '123456'
+DBNAME = 'Live_rooms'
 
 class Event(object):
 
     def init(plugin_event, Proc):
-        pass
+        while True:
+            try:
+                sql_base = pymysql.connect(host=DBHOST, user=DBUSER, password=DBPASS, database=DBNAME)
+                cur = sql_base.cursor()
+                cur.execute('CREATE TABLE IF NOT EXISTS Lives(room_id VARCHAR(20), live_Sta INT)')
+                sql_base.close()
+                break
+            except pymysql.Error as e:
+                print(str(e))
+
 
     def init_after(plugin_event, Proc):
         live = MyThread(Proc)
@@ -60,22 +75,22 @@ class MyThread(threading.Thread):
         global text
         while True:
             with lock:
-                with open(save_live_path + 'Live_room.txt', 'r+', encoding='utf-8') as live_text:
-                    lives = eval(live_text.read())
+                try:
+                    sql_base = pymysql.connect(host=DBHOST, user=DBUSER, password=DBPASS, database=DBNAME)
+                    cur = sql_base.cursor()
+                    sqlSer = "SELECT * FROM Lives"
+                    cur.execute(sqlSer)
+                    lives = cur.fetchall()
                     for live_index in lives:
-                        try:
-                            hug = requests.get(live_url + live_index)
-                            hugjs = json.loads(hug.text)
-                        except:
-                            time.sleep(5)
-                            continue
+                        hug = requests.get(live_url + live_index[0])
+                        hugjs = json.loads(hug.text)
                         try:
                             if hugjs['msg'] == 'success' and hugjs['message'] == 'success':
-                                if hugjs['data'][live_index]['live_status'] == 1 and lives[live_index] == 0:
-                                    tmp_live_reply1 = text.format(id=hugjs['data'][live_index]['uname'],
-                                                                  url=hugjs['data'][live_index]['room_id'])
-                                    tmp_live_reply1 += "\n直播名称：" + hugjs['data'][live_index]['title'] + '\n直播封面：\n'
-                                    tmp_live_reply1 += '[OP:image,file=' + hugjs['data'][live_index]['cover_from_user'] + ']'
+                                if hugjs['data'][live_index[0]]['live_status'] == 1 and live_index[1] == 0:
+                                    tmp_live_reply1 = text.format(id=hugjs['data'][live_index[0]]['uname'],
+                                                                  url=hugjs['data'][live_index[0]]['room_id'])
+                                    tmp_live_reply1 += "\n直播名称：" + hugjs['data'][live_index[0]]['title'] + '\n直播封面：\n'
+                                    tmp_live_reply1 += '[OP:image,file=' + hugjs['data'][live_index[0]]['cover_from_user'] + ']'
                                     plugin_event = OlivOS.API.Event(
                                         OlivOS.contentAPI.fake_sdk_event(
                                             bot_info=self.Proc.Proc_data['bot_info_dict'][botHash],
@@ -86,28 +101,47 @@ class MyThread(threading.Thread):
                                     plugin_event.send('group', 765947729, tmp_live_reply1)
                                     plugin_event.send('group', 754041375, tmp_live_reply1)
                                     plugin_event.send('group', 252994683, tmp_live_reply1)
-                                    lives[live_index] = 1
-                                elif hugjs['data'][live_index]['live_status'] == 2 or hugjs['data'][live_index]['live_status'] == 0:
-                                    lives[live_index] = 0
+                                    try:
+                                        sqlCha = "UPDATE Lives SET Live_Sta=%s WHERE room_id=%s"
+                                        val = (1, live_index[0])
+                                        cur.execute(sqlCha, val)
+                                        sql_base.commit()
+                                    except pymysql.Error as e:
+                                        print(str(e))
+                                        sql_base.rollback()
+                                elif hugjs['data'][live_index[0]]['live_status'] == 2 or hugjs['data'][live_index[0]]['live_status'] == 0:
+                                    try:
+                                        sqlCha = "UPDATE Lives SET Live_Sta=%s WHERE room_id=%s"
+                                        val = (0, live_index[0])
+                                        cur.execute(sqlCha, val)
+                                    except pymysql.Error as e:
+                                        print(str(e))
+                                        sql_base.rollback()
                             rad_sleep = random.randint(30, 90)
                             time.sleep(rad_sleep)
                         except:
-                            time.sleep(0.5)
+                            time.sleep(10)
                             continue
-                    live_text.seek(0)
-                    live_text.truncate()
-                    live_text.write(str(lives))
+                    sql_base.close()
+                except pymysql.Error as e:
+                    print(str(e))
+                    time.sleep(0.1)
+                    continue
             time.sleep(random.randint(5, 10))
 
 def unity_reply(plugin_event, Proc):
     command_list = OlivOSReply.msgReply.deleteBlank(plugin_event.data.message)
     if command_list[0] == '直播添加':
         with lock:
-            with open(save_live_path + 'Live_room.txt', 'r+', encoding='utf-8') as f_live:
-                dic = eval(f_live.read())
-                dic[command_list[1]] = 0
-                f_live.seek(0)
-                f_live.truncate()
-                f_live.write(str(dic))
+            try:
+                sql_base = pymysql.connect(host=DBHOST, user=DBUSER, password=DBPASS, database=DBNAME)
+                cur = sql_base.cursor()
+                sqlQuery = 'INSERT INTO Lives (room_id, Live_Sta) VALUE (%s,%s) '
+                value = (command_list[1], 0)
+                cur.execute(sqlQuery, value)
+                sql_base.commit()
+                sql_base.close()
+            except pymysql.Error as e:
+                print(str(e))
         plugin_event.reply(command_list[1] + '已添加到直播监听列表喵')
 
