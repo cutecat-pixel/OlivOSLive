@@ -109,11 +109,12 @@ class MyThread(threading.Thread):
                                     except pymysql.Error as e:
                                         print(str(e))
                                         sql_base.rollback()
-                                elif hugjs['data'][live_index[0]]['live_status'] == 2 or hugjs['data'][live_index[0]]['live_status'] == 0:
+                                elif hugjs['data'][live_index[0]]['live_status'] == 0 or hugjs['data'][live_index[0]]['live_status'] == 2:
                                     try:
                                         sqlCha = "UPDATE Lives SET Live_Sta=%s WHERE room_id=%s"
                                         val = (0, live_index[0])
                                         cur.execute(sqlCha, val)
+                                        sql_base.commit()
                                     except pymysql.Error as e:
                                         print(str(e))
                                         sql_base.rollback()
