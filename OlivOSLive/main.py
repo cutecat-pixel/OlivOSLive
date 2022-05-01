@@ -81,6 +81,8 @@ class MyThread(threading.Thread):
                     sqlSer = "SELECT * FROM Lives"
                     cur.execute(sqlSer)
                     lives = cur.fetchall()
+                    if lives == None:
+                        continue
                     for live_index in lives:
                         hug = requests.get(live_url + live_index[0])
                         hugjs = json.loads(hug.text)
