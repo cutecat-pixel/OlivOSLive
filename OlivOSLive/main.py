@@ -66,6 +66,10 @@ lock = multiprocessing.Lock()
 lives = {}
 hugjs = {}
 
+def deleteBlank(str):
+    str_list = list(filter(None,str.split(" ")))
+    return str_list
+
 class MyThread(threading.Thread):
     def __init__(self, Proc):
         super().__init__()
@@ -133,7 +137,7 @@ class MyThread(threading.Thread):
             time.sleep(random.randint(5, 10))
 
 def unity_reply(plugin_event, Proc):
-    command_list = OlivOSReply.msgReply.deleteBlank(plugin_event.data.message)
+    command_list = deleteBlank(plugin_event.data.message)
     if command_list[0] == '直播添加':
         with lock:
             try:
