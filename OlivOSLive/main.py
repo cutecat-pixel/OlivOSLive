@@ -85,7 +85,7 @@ class MyThread(threading.Thread):
                     sqlSer = "SELECT * FROM Lives"
                     cur.execute(sqlSer)
                     lives = cur.fetchall()
-                    if lives[0] == None:
+                    if lives == ():
                         continue
                     for live_index in lives:
                         hug = requests.get(live_url + live_index[0])
