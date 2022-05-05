@@ -33,9 +33,15 @@ class Event(object):
     def init(plugin_event, Proc):
         while True:
             try:
+                sql_base = pymysql.connect(host=DBHOST, user=DBUSER, password=DBPASS)
+                cur = sql_base.cursor()
+                cur.execute('CREATE DATABASE IF NOT EXISTS Live_rooms')
+                sql_base.commit()
+                sql_base.close()
                 sql_base = pymysql.connect(host=DBHOST, user=DBUSER, password=DBPASS, database=DBNAME)
                 cur = sql_base.cursor()
                 cur.execute('CREATE TABLE IF NOT EXISTS Lives(room_id VARCHAR(20), live_Sta INT)')
+                sql_base.commit()
                 sql_base.close()
                 break
             except pymysql.Error as e:
