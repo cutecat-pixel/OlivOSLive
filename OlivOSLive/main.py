@@ -81,7 +81,7 @@ class MyThread(threading.Thread):
                     sqlSer = "SELECT * FROM Lives"
                     cur.execute(sqlSer)
                     lives = cur.fetchall()
-                    if lives == None:
+                    if lives[0] == None:
                         continue
                     for live_index in lives:
                         hug = requests.get(live_url + live_index[0])
@@ -120,7 +120,7 @@ class MyThread(threading.Thread):
                                     except pymysql.Error as e:
                                         print(str(e))
                                         sql_base.rollback()
-                            rad_sleep = random.randint(30, 90)
+                            rad_sleep = random.randint(10, 30)
                             time.sleep(rad_sleep)
                         except:
                             time.sleep(10)
