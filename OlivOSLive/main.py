@@ -61,7 +61,7 @@ class Event(object):
 text = '收到大喵服务器直播推送：\n群关注的up{id}开播辣！\n直播间id：{url}'
 save_live_path = './plugin/data/OlivOSLive/'
 live_url = 'http://api.live.bilibili.com/room/v1/Room/get_status_info_by_uids?uids[]='
-botHash = '72126548d1abab2012c697a3301cb881'
+botHash = '' #换成自己的
 lock = multiprocessing.Lock()
 lives = {}
 hugjs = {}
