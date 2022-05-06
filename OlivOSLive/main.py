@@ -98,10 +98,10 @@ class MyThread(threading.Thread):
                         try:
                             if hugjs['msg'] == 'success' and hugjs['message'] == 'success':
                                 if hugjs['data'][live_index[0]]['live_status'] == 1 and live_index[1] == 0:
-                                    tmp_live_reply1 = text.format(id=hugjs['data'][live_index[0]]['uname'],
+                                    tmp_live_reply = text.format(id=hugjs['data'][live_index[0]]['uname'],
                                                                   url=hugjs['data'][live_index[0]]['room_id'])
-                                    tmp_live_reply1 += "\n直播名称：" + hugjs['data'][live_index[0]]['title'] + '\n直播封面：\n'
-                                    tmp_live_reply1 += '[OP:image,file=' + hugjs['data'][live_index[0]]['cover_from_user'] + ']'
+                                    tmp_live_reply += "\n直播名称：" + hugjs['data'][live_index[0]]['title'] + '\n直播封面：\n'
+                                    tmp_live_reply += '[OP:image,file=' + hugjs['data'][live_index[0]]['cover_from_user'] + ']'
                                     plugin_event = OlivOS.API.Event(
                                         OlivOS.contentAPI.fake_sdk_event(
                                             bot_info=self.Proc.Proc_data['bot_info_dict'][botHash],
@@ -109,9 +109,7 @@ class MyThread(threading.Thread):
                                         ),
                                         self.Proc.log
                                     )
-                                    plugin_event.send('group', 765947729, tmp_live_reply1)
-                                    plugin_event.send('group', 754041375, tmp_live_reply1)
-                                    plugin_event.send('group', 252994683, tmp_live_reply1)
+                                    plugin_event.send('group', 765947729, tmp_live_reply)
                                     try:
                                         sqlCha = "UPDATE Lives SET Live_Sta=%s WHERE room_id=%s"
                                         val = (1, live_index[0])
