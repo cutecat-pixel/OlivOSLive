@@ -13,4 +13,7 @@ pymysql请用pip命令`pip install pymysql`
 目前平台仅支持`qq`  
 ps:因为担心两个线程同时读取数据所可能产生的问题，我使用了python的`threading`库中的`Lock()`来控制两个线程对于同一个数据库的访问，  
 所以当你发送直播添加的指令的时候，轮询线程可能正在占用`Lock()`,所以指令执行在已经存在的数据越多的情况下执行延迟越大(因为要等另一个线程关闭数据库)  
-（如果正好遇到`save`事件。。可能会添加失败）
+（如果正好遇到`save`事件。。可能会添加失败） 
+###### 效果展示
+1.直播添加![Live](https://github.com/cutecat-pixel/cat-s_data/blob/main/imgs/OlivOSLive1.jpg)  
+2.直播推送![live](https://github.com/cutecat-pixel/cat-s_data/blob/main/imgs/OlivOSLive2.jpg)
