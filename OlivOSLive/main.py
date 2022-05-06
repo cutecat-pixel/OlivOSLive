@@ -109,7 +109,7 @@ class MyThread(threading.Thread):
                                         ),
                                         self.Proc.log
                                     )
-                                    plugin_event.send('group', 765947729, tmp_live_reply)
+                                    plugin_event.send('group', , tmp_live_reply) #填入想推送的群号
                                     try:
                                         sqlCha = "UPDATE Lives SET Live_Sta=%s WHERE room_id=%s"
                                         val = (1, live_index[0])
