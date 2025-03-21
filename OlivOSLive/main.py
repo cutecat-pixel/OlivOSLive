@@ -15,7 +15,6 @@ import threading
 import time
 import OlivOS
 import OlivOSLive
-import OlivOSReply
 import requests
 import os
 import time
